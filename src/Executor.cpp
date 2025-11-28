@@ -1,10 +1,8 @@
 #include "Executor.hpp"
-#include <stdexcept> // 为了使用 std::invalid_argument
+#include <stdexcept>
 
 Executor::Executor(int32_t x, int32_t y, Direction heading)
-    : x_(x), y_(y), heading_(heading) {}
-
-// ... 文件的其余部分保持不变 ...
+    : x_(x), y_(y), heading_(heading), accelerated_(false) {}
 
 void Executor::executeCommands(const std::string &commands)
 {
@@ -13,14 +11,37 @@ void Executor::executeCommands(const std::string &commands)
         switch (cmd)
         {
         case 'M':
-            moveForward();
+            if (accelerated_)
+            {
+                moveForward();
+                moveForward();
+            }
+            else
+            {
+                moveForward();
+            }
             break;
+
         case 'L':
+            if (accelerated_)
+            {
+                moveForward();
+            }
             turnLeft();
             break;
+
         case 'R':
+            if (accelerated_)
+            {
+                moveForward();
+            }
             turnRight();
             break;
+
+        case 'F':
+            accelerated_ = !accelerated_;
+            break;
+
         default:
             throw std::invalid_argument("Invalid command character");
         }
