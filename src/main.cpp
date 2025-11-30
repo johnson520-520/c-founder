@@ -3,16 +3,23 @@
 
 int main()
 {
-    Executor executor;
+    Executor e;
 
-    // 示例：执行一个指令序列
-    executor.executeCommand('B'); // 进入倒车
-    executor.executeCommand('M'); // 后退一格
-    executor.executeCommand('F'); // 同时开启加速
-    executor.executeCommand('M'); // 倒退两格
+    // 需求3示例：B + M + F + M
+    e.executeCommand('B'); // 进入倒车
+    e.executeCommand('M'); // 倒退 1 格
+    e.executeCommand('F'); // 开启加速
+    e.executeCommand('M'); // 倒退 2 格（逐格后退）
 
-    std::cout << "Final Position: (" << executor.getX() << ", " << executor.getY() << ")" << std::endl;
-    std::cout << "Final Heading: " << static_cast<int>(executor.getDirection()) << std::endl;
+    std::cout << "Case1 Position: (" << e.getX() << ", " << e.getY() << ")\n";
+    std::cout << "Case1 Heading: " << static_cast<int>(e.getDirection()) << "\n";
+
+    // TR 示例
+    Executor e2;
+    e2.executeCommands("FTR"); // 加速状态下执行 TR 掉头
+
+    std::cout << "Case2 Position: (" << e2.getX() << ", " << e2.getY() << ")\n";
+    std::cout << "Case2 Heading: " << static_cast<int>(e2.getDirection()) << "\n";
 
     return 0;
 }
