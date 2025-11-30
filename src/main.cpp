@@ -1,16 +1,18 @@
-#include <iostream>
 #include "Executor.hpp"
+#include <iostream>
 
 int main()
 {
     Executor executor;
 
-    std::string commands = "FMRMLMF";
+    // 示例：执行一个指令序列
+    executor.executeCommand('B'); // 进入倒车
+    executor.executeCommand('M'); // 后退一格
+    executor.executeCommand('F'); // 同时开启加速
+    executor.executeCommand('M'); // 倒退两格
 
-    executor.executeCommands(commands);
-
-    std::cout << "Final Position: (" << executor.getX() << ", " << executor.getY() << ")\n";
-    std::cout << "Final Heading: " << static_cast<char>(executor.getHeading()) << std::endl;
+    std::cout << "Final Position: (" << executor.getX() << ", " << executor.getY() << ")" << std::endl;
+    std::cout << "Final Heading: " << static_cast<int>(executor.getDirection()) << std::endl;
 
     return 0;
 }

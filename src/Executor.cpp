@@ -1,106 +1,106 @@
 #include "Executor.hpp"
-#include <stdexcept>
 
-Executor::Executor(int32_t x, int32_t y, Direction heading)
-    : x_(x), y_(y), heading_(heading), accelerated_(false) {}
+Executor::Executor(int x, int y, Direction dir)
+    : x(x), y(y), dir(dir) {}
 
-void Executor::executeCommands(const std::string &commands)
+void Executor::executeCommand(char command)
 {
-    for (char cmd : commands)
+    switch (command)
     {
-        switch (cmd)
+    case 'F':
+        fastMode = !fastMode;
+        break;
+    case 'B':
+        backMode = !backMode;
+        break;
+    case 'M':
+    {
+        int steps = fastMode ? 2 : 1;
+        if (backMode)
+            moveBackward(steps);
+        else
+            moveForward(steps);
+        break;
+    }
+    case 'L':
+        if (backMode)
         {
-        case 'M':
-            if (accelerated_)
-            {
-                moveForward();
-                moveForward();
-            }
-            else
-            {
-                moveForward();
-            }
-            break;
-
-        case 'L':
-            if (accelerated_)
-            {
-                moveForward();
-            }
+            moveBackward(1);
+            turnRight(); // 倒车状态下 L = 右转
+        }
+        else
+        {
             turnLeft();
-            break;
-
-        case 'R':
-            if (accelerated_)
-            {
-                moveForward();
-            }
+        }
+        break;
+    case 'R':
+        if (backMode)
+        {
+            moveBackward(1);
+            turnLeft(); // 倒车状态下 R = 左转
+        }
+        else
+        {
             turnRight();
-            break;
+        }
+        break;
+    }
+}
 
-        case 'F':
-            accelerated_ = !accelerated_;
+void Executor::moveForward(int steps)
+{
+    while (steps--)
+    {
+        switch (dir)
+        {
+        case Direction::N:
+            y += 1;
             break;
-
-        default:
-            throw std::invalid_argument("Invalid command character");
+        case Direction::E:
+            x += 1;
+            break;
+        case Direction::S:
+            y -= 1;
+            break;
+        case Direction::W:
+            x -= 1;
+            break;
         }
     }
 }
 
-void Executor::moveForward()
+void Executor::moveBackward(int steps)
 {
-    switch (heading_)
+    while (steps--)
     {
-    case Direction::N:
-        ++y_;
-        break;
-    case Direction::S:
-        --y_;
-        break;
-    case Direction::E:
-        ++x_;
-        break;
-    case Direction::W:
-        --x_;
-        break;
+        switch (dir)
+        {
+        case Direction::N:
+            y -= 1;
+            break;
+        case Direction::E:
+            x -= 1;
+            break;
+        case Direction::S:
+            y += 1;
+            break;
+        case Direction::W:
+            x += 1;
+            break;
+        }
     }
 }
 
 void Executor::turnLeft()
 {
-    switch (heading_)
-    {
-    case Direction::N:
-        heading_ = Direction::W;
-        break;
-    case Direction::W:
-        heading_ = Direction::S;
-        break;
-    case Direction::S:
-        heading_ = Direction::E;
-        break;
-    case Direction::E:
-        heading_ = Direction::N;
-        break;
-    }
+    dir = static_cast<Direction>((static_cast<int>(dir) + 3) % 4);
 }
 
 void Executor::turnRight()
 {
-    switch (heading_)
-    {
-    case Direction::N:
-        heading_ = Direction::E;
-        break;
-    case Direction::E:
-        heading_ = Direction::S;
-        break;
-    case Direction::S:
-        heading_ = Direction::W;
-        break;
-    case Direction::W:
-        heading_ = Direction::N;
-        break;
-    }
+    dir = static_cast<Direction>((static_cast<int>(dir) + 1) % 4);
 }
+
+int Executor::getX() const { return x; }
+int Executor::getY() const { return y; }
+Direction Executor::getDirection() const { return dir; }
